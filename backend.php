@@ -26,8 +26,6 @@ if (isset($_POST['action']) && $_POST['action'] == "signup"){
           ));
       exit;
     }
-
-
     /**
      * Validimi i E-Mailit. Shohim nese E-Maili egziston
      */
