@@ -4,7 +4,6 @@ require_once "includes/header.php";
 // Menu
 require_once "includes/top_menu.php";
 ?>
-
 <br><br>
 <div class="container">
     <div class="row">
@@ -31,8 +30,6 @@ require_once "includes/top_menu.php";
         </div>
     </div>
 </div>
-
-
 
 <?php
 require_once "includes/footer.php";

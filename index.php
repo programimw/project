@@ -46,8 +46,6 @@ require_once "includes/top_menu.php";
         <span class="visually-hidden">Next</span>
     </button>
 </div>
-
-
 <?php
     require_once "includes/footer.php";
 ?>
