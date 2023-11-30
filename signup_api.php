@@ -2,7 +2,7 @@
 require_once "includes/connect.php";
 
 // Signup User
-if (isset($_POST['action']) && $_POST['action'] == "signup"){
+if (isset($_POST['action']) && $_POST['action'] == "signup") {
     /*
      * Marrja e te dhenave nga front-end
      * */
@@ -18,13 +18,13 @@ if (isset($_POST['action']) && $_POST['action'] == "signup"){
      * */
     // Validate alphanumeric
     if (!preg_match($alphanumericRegex, $name)) {
-      echo json_encode(
-          array(
-              "status"=>201,
-              "message"=>"Name must be alphanumeric and minimum 1 letter",
-              "tag" =>"nameHelp"
-          ));
-      exit;
+        http_response_code(203);
+        echo json_encode(
+            array(
+                "message" => "Name must be alphanumeric and minimum 1 letter",
+                "tag" => "nameHelp"
+            ));
+        exit;
     }
 
     /**
@@ -32,26 +32,26 @@ if (isset($_POST['action']) && $_POST['action'] == "signup"){
      */
     $query_check = "SELECT id 
                     FROM users 
-                    WHERE email = '".$email."'";
+                    WHERE email = '" . $email . "'";
 
-    $result_check = mysqli_query($conn,$query_check);
+    $result_check = mysqli_query($conn, $query_check);
 
-    if (!$result_check){
+    if (!$result_check) {
+        http_response_code(203);
         echo json_encode(
             array(
-                "status"=>201,
-                "message"=>"Internal Server Error ".__LINE__,
+                "message" => "Internal Server Error " . __LINE__,
                 "error" => mysqli_error($conn)
             ));
         exit;
     }
 
-    if (mysqli_num_rows($result_check)){
+    if (mysqli_num_rows($result_check)) {
+        http_response_code(203);
         echo json_encode(
             array(
-                "status"=>201,
-                "message"=>"User with email: ".$email." aready exists on system.",
-                "tag" =>"emailHelp",
+                "message" => "User with email: " . $email . " aready exists on system.",
+                "tag" => "emailHelp",
                 "error" => mysqli_error($conn)
             ));
         exit;
@@ -62,27 +62,27 @@ if (isset($_POST['action']) && $_POST['action'] == "signup"){
      * Shtimi i te dhenave ne databaze
      */
     $query_insert = "INSERT INTO users
-                     set name    = '".$name."',
-                     surname    = '".$surname."',
-                     password    = '".$password_hashed."',
-                     created_at    = '".date("Y-m-d")."',
-                     email    = '".$email."'";
+                     set name    = '" . $name . "',
+                     surname    = '" . $surname . "',
+                     password    = '" . $password_hashed . "',
+                     created_at    = '" . date("Y-m-d") . "',
+                     email    = '" . $email . "'";
 
     $result_insert = mysqli_query($conn, $query_insert);
 
-    if (!$result_insert){
+    if (!$result_insert) {
+        http_response_code(203);
         echo json_encode(
             array(
-                "status"=>201,
-                "message"=>"Internal Server Error ".__LINE__,
+                "message" => "Internal Server Error " . __LINE__,
                 "error" => mysqli_error($conn)
             ));
         exit;
-    } else{
+    } else {
+        http_response_code(201);
         echo json_encode(
             array(
-                "status"=>200,
-                "message"=>"Data saved successfully",
+                "message" => "Data saved successfully",
             ));
         exit;
     }

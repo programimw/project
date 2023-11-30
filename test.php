@@ -6,7 +6,7 @@ if (isset($_GET['errorMessage'])){
 <html>
 <head></head>
 <body>
-<form method="post" action="backend.php">
+<form method="post" action="signup_api.php">
     <label for="emri"> Emri: </label>
     <input type="text" name="emri" placeholder="Vendosni emrin">
     <br><br>

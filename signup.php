@@ -18,48 +18,42 @@ require_once "includes/top_menu.php";
                     <label for="exampleInputName" class="form-label">Name</label>
                     <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" required>
                     <div class="form-text"
-                        <span id = "nameHelp" class="error"></span>
-                    </div>
+                    <span id="nameHelp" class="error"></span>
                 </div>
-                <div class="mb-3">
-                    <label for="exampleInputSurname" class="form-label">Surname</label>
-                    <input type="text" class="form-control" id="surname" name = "surname" aria-describedby="surnameHelp" required>
-                    <div class="form-text">
-                        <span id = "surnameHelp" class = "error"></span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control"  id="email" name = "email" aria-describedby="emailHelp" required>
-                    <div class="form-text">
-                        <span id = "emailHelp" class = "error"></span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control"  id="password" name = "password" required>
-                    <div class="form-text">
-                        <span id = "passwordHelp" class = "error"></span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputConfirmPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control"  id="confirmPassword" name = "confirmPassword" required>
-                    <div class="form-text">
-                        <span id = "confirmPasswordHelp" class = "error"></span>
-                    </div>
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div>
-<!--                <button type="submit" class="btn btn-primary">Submit</button>-->
-                <button type="button" class="btn btn-primary" onclick="signup()">Save</button>
-            </form>
         </div>
+        <div class="mb-3">
+            <label for="exampleInputSurname" class="form-label">Surname</label>
+            <input type="text" class="form-control" id="surname" name="surname" aria-describedby="surnameHelp" required>
+            <div class="form-text">
+                <span id="surnameHelp" class="error"></span>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" required>
+            <div class="form-text">
+                <span id="emailHelp" class="error"></span>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+            <div class="form-text">
+                <span id="passwordHelp" class="error"></span>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputConfirmPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            <div class="form-text">
+                <span id="confirmPasswordHelp" class="error"></span>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="signup()">Save</button>
+        </form>
     </div>
 </div>
-
+</div>
 
 
 <?php
@@ -68,11 +62,6 @@ require_once "includes/footer.php";
 
 
 <script>
-
-    function isEmpty(val) {
-        return ( val == "" || val === undefined || val == null || val === false || val.length <= 0) ? true : false;
-    }
-
     function signup() {
         var error = 0;
         var message = "";
@@ -86,17 +75,17 @@ require_once "includes/footer.php";
         var passwordRegex = /^[a-zA-Z0-9_-]{4,}$/;
 
         // Validimi i emrit
-        // if (!alphanumericRegex.test(name)){
-        //     error ++;
-        //     message = "Name must be alphanumeric and minimum 1 letter";
-        //     $('#nameHelp').text(message);
-        // } else {
-        //     $('#nameHelp').text("");
-        // }
+        if (!alphanumericRegex.test(name)) {
+            error++;
+            message = "Name must be alphanumeric and minimum 1 letter";
+            $('#nameHelp').text(message);
+        } else {
+            $('#nameHelp').text("");
+        }
 
         // Validimi i mbiemrit
-        if (!alphanumericRegex.test(surname)){
-            error ++;
+        if (!alphanumericRegex.test(surname)) {
+            error++;
             message = "Surname must be alphanumeric and minimum 1 letter";
             $('#surnameHelp').text(message);
         } else {
@@ -104,8 +93,8 @@ require_once "includes/footer.php";
         }
 
         // Validimi i mbiemrit
-        if (isEmpty(email)){
-            error ++;
+        if (isEmpty(email)) {
+            error++;
             message = "Email can not be empty";
             $('#emailHelp').text(message);
         } else {
@@ -113,16 +102,16 @@ require_once "includes/footer.php";
         }
 
         // validimi i passwordit
-        if (!passwordRegex.test(password)){
-            error ++;
+        if (!passwordRegex.test(password)) {
+            error++;
             message = "Incorrect password";
             $('#passwordHelp').text(message);
         } else {
             $('#passwordHelp').text("");
         }
 
-        if (password != confirmPassword){
-            error ++;
+        if (password != confirmPassword) {
+            error++;
             message = "Confirm password does not match with password";
             $('#confirmPasswordHelp').text(message);
         } else {
@@ -130,16 +119,13 @@ require_once "includes/footer.php";
         }
 
         /////////////////
-        var data = {
-            'action': 'signup',
-            'name': name,
-            'surname': surname,
-            'email': email,
-            'password': password,
-            'confirmPassword': confirmPassword
-        };
-
-
+        var data = new FormData();
+        data.append("action", "signup")
+        data.append("name", name)
+        data.append("surname", surname)
+        data.append("email", email)
+        data.append("password", password)
+        data.append("confirmPassword", confirmPassword)
 
         if (error > 0) {
             Swal.fire('Error', 'Please fill all required fields', 'error')
@@ -147,22 +133,26 @@ require_once "includes/footer.php";
         } else {
             $.ajax({
                 type: "POST",
-                url: "backend.php",
+                url: "signup_api.php",
+                // dataType: 'json',
                 async: false,
                 cache: false,
+                processData: false,
                 data: data,
-                success: function (response) {
+                contentType: false,
+                success: function (response, status, call) {
                     response = JSON.parse(response);
 
-                    if (response.status == 200){
+                    if (call.status == 201) {
                         Swal.fire('Success', response.message, 'success');
                         $('#nameHelp').text("");
-                        console.log("Test");
+                        // setTimeout(function () {
+                        //     window.location.href = "login.php";
+                        // }, 2000)
                     } else {
-                        $("#"+response.tag).text(response.message);
+                        $("#" + response.tag).text(response.message);
                         Swal.fire('Error', response.message, 'error')
                     }
-                // Test1234
                 }
             });
         }
@@ -170,8 +160,6 @@ require_once "includes/footer.php";
 
 
 </script>
-
-
 
 
 </body>

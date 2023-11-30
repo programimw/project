@@ -13,19 +13,20 @@ require_once "includes/top_menu.php";
         <div class="col-md-6">
             <form method="post">
                 <div class="mb-3">
-                    <label for="exampleInputEmail" class="form-label">Email address</label>
-                    <input type="email" class="form-control"  id="email" name = "email" aria-describedby="emailHelp" required>
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div class="form-text">
+                        <span id="emailHelp" class="error"></span>
+                    </div>
                 </div>
                 <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control"  id="password" name = "password" required>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="form-text">
+                        <span id="passwordHelp" class="error"></span>
+                    </div>
                 </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-primary" onclick="login();">Login</button>
             </form>
         </div>
     </div>
@@ -34,9 +35,69 @@ require_once "includes/top_menu.php";
 <?php
 require_once "includes/footer.php";
 ?>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
+
+
+<script>
+
+    function login() {
+        var error = 0;
+        var message = "";
+        var email = $("#email").val();
+        var password = $("#password").val();
+
+        var passwordRegex = /^[a-zA-Z0-9_-]{4,}$/;
+
+        // Validimi i email nese eshte bosh
+        if (isEmpty(email)) {
+            error++;
+            message = "Email is required";
+            $('#emailHelp').text(message);
+        } else {
+            $('#emailHelp').text("");
+        }
+
+        // validimi i passwordit
+        if (!passwordRegex.test(password)) {
+            error++;
+            message = "Incorrect password";
+            $('#passwordHelp').text(message);
+        } else {
+            $('#passwordHelp').text("");
+        }
+        /////////////////
+        var data = new FormData();
+        data.append("action", "login")
+        data.append("email", email)
+        data.append("password", password)
+
+        if (error > 0) {
+            Swal.fire('Error', 'Please fill all required fields', 'error')
+            return false;
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "login_api.php",
+                // dataType: 'json',
+                async: false,
+                cache: false,
+                processData: false,
+                data: data,
+                contentType: false,
+                success: function (response, status, call) {
+                    response = JSON.parse(response);
+
+                    if (call.status == 200) {
+                        window.location.href = "profile.php";
+                    } else {
+                        $("#" + response.tag).text(response.message);
+                        Swal.fire('Error', response.message, 'error')
+                    }
+                }
+            });
+        }
+    }
+
+</script>
 
 
 </body>
