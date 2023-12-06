@@ -64,6 +64,7 @@ require_once "includes/footer.php";
         } else {
             $('#passwordHelp').text("");
         }
+
         /////////////////
         var data = new FormData();
         data.append("action", "login")
