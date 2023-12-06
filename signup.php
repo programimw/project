@@ -146,9 +146,9 @@ require_once "includes/footer.php";
                     if (call.status == 201) {
                         Swal.fire('Success', response.message, 'success');
                         $('#nameHelp').text("");
-                        // setTimeout(function () {
-                        //     window.location.href = "login.php";
-                        // }, 2000)
+                        setTimeout(function () {
+                            window.location.href = "login.php";
+                        }, 2000)
                     } else {
                         $("#" + response.tag).text(response.message);
                         Swal.fire('Error', response.message, 'error')

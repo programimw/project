@@ -1,6 +1,5 @@
 <?php
 require_once "includes/connect.php";
-
 // Signup User
 if (isset($_POST['action']) && $_POST['action'] == "login") {
     /*

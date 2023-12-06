@@ -1,6 +1,8 @@
 <?php
+// if (PHP_SAPI != "cli" && PHP_SAPI != "cgi-fcgi") {
+//     die("Accesso negato");
+// }
 require_once "includes/connect.php";
-
 // Signup User
 if (isset($_POST['action']) && $_POST['action'] == "signup") {
     /*
