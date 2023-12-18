@@ -57,13 +57,11 @@ $data = mysqli_fetch_assoc($result_user_data);
                         <form>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
-                                <!-- Form Group (first name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="name">First name</label>
                                     <input class="form-control" id="name" name = 'name' type="text" placeholder="Enter your first name" value="<?= $data['name'] ?>">
                                     <span id = 'nameHelp' class = 'error'></span>
                                 </div>
-                                <!-- Form Group (last name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="inputLastName">Last name</label>
                                     <input class="form-control" id="surname" name = 'surname'  type="text" placeholder="Enter your last name" value="<?= $data['surname'] ?>">
@@ -213,12 +211,12 @@ require_once "includes/login/footer.php";
                 contentType: false,
                 success: function (response, status, call) {
                     response = JSON.parse(response);
-
+                    // TODO: HANDLE RESPONSE
                     if (call.status == 201) {
                         Swal.fire('Success', response.message, 'success');
                         $('#nameHelp').text("");
                         setTimeout(function () {
-                            window.location.href = "login.php";
+                            // window.location.href = "login.php";
                         }, 2000)
                     } else {
                         $("#" + response.tag).text(response.message);

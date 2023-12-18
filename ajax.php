@@ -1,6 +1,17 @@
 <?php
 session_start();
+if (!isset($_SESSION['id'])){
+    http_response_code(401);
+    echo json_encode(
+        array(
+            "message" => "Unauthorized",
+        ));
+    exit;
+}
+
+
 require_once "includes/connect.php";
+require_once "functions.php";
 
 
 if (isset($_POST['action']) && $_POST['action'] == "updateProfile") {
@@ -10,53 +21,10 @@ if (isset($_POST['action']) && $_POST['action'] == "updateProfile") {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $surname = mysqli_real_escape_string($conn, $_POST['surname']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
-//    $confirmPassword = mysqli_real_escape_string($conn, $_POST['confirmPassword']);
     $alphanumericRegex = '/^[a-zA-Z0-9]+$/';
-//    $password = mysqli_real_escape_string($conn,$_POST['password']);
-//    $password_hashed = mysqli_real_escape_string($conn, password_hash($_POST['password'], PASSWORD_BCRYPT));
-    $types = array('png', 'jpg','PNG', 'JPG','jpeg','JPEG');
-    $photo_name = $_FILES['photo']['name'];
-    $photo_name_array = explode(".", $photo_name);
-    $type = end($photo_name_array);
-
-    if (!in_array($type, $types)){
-        http_response_code(203);
-        echo json_encode(
-            array(
-                "message" => "Photo type not allowed",
-                "tag" => "photoHelp"
-            ));
-        exit;
-    }
-
-    $photo_path = 'img/profile_photo/'.$_SESSION['id'].".".$type;
-    if (move_uploaded_file($_FILES["photo"]["tmp_name"], $photo_path)) {
-//        http_response_code(200);
-//        echo json_encode(
-//            array(
-//                "message" => "Photo Uploaded",
-//            ));
-//        exit;
-    } else {
-//        http_response_code(203);
-//        echo json_encode(
-//            array(
-//                "message" => "Internal server error on photo upload",
-//                "tag" => "photoHelp"
-//            ));
-//        exit;
-    }
-//    exit;
-//    $photo_name_array
-//    echo '<pre>';
-//    print_r($type);
-//    print_r($_FILES);
-//    print_r($_POST);
-//    exit;
-    /*
+    /**
      * Validimi i te dhenave
-     * */
-    // Validate alphanumeric
+     */
     if (!preg_match($alphanumericRegex, $name)) {
         http_response_code(203);
         echo json_encode(
@@ -77,7 +45,7 @@ if (isset($_POST['action']) && $_POST['action'] == "updateProfile") {
         exit;
     }
 
-    if (empty($email)){
+    if (empty($email)) {
         http_response_code(203);
         echo json_encode(
             array(
@@ -90,50 +58,82 @@ if (isset($_POST['action']) && $_POST['action'] == "updateProfile") {
     /**
      * Validimi i E-Mailit. Shohim nese E-Maili egziston
      */
-//    $query_check = "SELECT id
-//                    FROM users
-//                    WHERE email = '" . $email . "'";
-//
-//    $result_check = mysqli_query($conn, $query_check);
-//
-//    if (!$result_check) {
-//        http_response_code(203);
-//        echo json_encode(
-//            array(
-//                "message" => "Internal Server Error " . __LINE__,
-//                "error" => mysqli_error($conn)
-//            ));
-//        exit;
-//    }
-//
-//    if (mysqli_num_rows($result_check)) {
-//        http_response_code(203);
-//        echo json_encode(
-//            array(
-//                "message" => "User with email: " . $email . " aready exists on system.",
-//                "tag" => "emailHelp",
-//                "error" => mysqli_error($conn)
-//            ));
-//        exit;
-//    }
+    $query_check = "SELECT id,
+                           photo
+                    FROM users
+                    WHERE email = '" . $email . "'";
+
+    $result_check = mysqli_query($conn, $query_check);
+
+    if (!$result_check) {
+        http_response_code(203);
+        echo json_encode(
+            array(
+                "message" => "Internal Server Error " . __LINE__,
+                "error" => mysqli_error($conn)
+            ));
+        exit;
+    }
+
+    if (!mysqli_num_rows($result_check)) {
+        http_response_code(203);
+        echo json_encode(
+            array(
+                "message" => "User does not exists",
+                "tag" => "emailHelp",
+                "error" => mysqli_error($conn)
+            ));
+        exit;
+    }
+    $user_data = mysqli_fetch_assoc($result_check);
+    // Verifikojme nese useri qe po perditeson te dhenat
+    // eshte useri te cilit i perkasin te dhenat
+    if ($_SESSION['id'] != $user_data['id']) {
+        http_response_code(401);
+        echo json_encode(
+            array(
+                "message" => "Unauthorized request"
+            ));
+        exit;
+    }
+
+
+    // Ngarkimi i fotos pasi jane validuar te gjitha te dhenat
+    if (isset($_FILES['photo'])){
+        $photo_name = $_FILES['photo']['name'];
+        $photo_name_array = explode(".", $photo_name);
+        $type = end($photo_name_array);
+        $new_path = 'img/profile_photo/' . $_SESSION['id'] . "." . $type;
+
+        if ( !uploadFile($photo_name, $_FILES["photo"]["tmp_name"], $new_path)) {
+            http_response_code(203);
+            echo json_encode(
+                array(
+                    "message" => "Photo type not allowed or internal error.",
+                    "tag" => "photoHelp"
+                ));
+            exit;
+        }
+    } else {
+        $new_path = $user_data['photo'];
+    }
 
 
     /**
-     * Shtimi i te dhenave ne databaze
+     * perditesimi i te dhenave ne databaze
      */
     $query_update = "UPDATE users
                      set name    = '" . $name . "',
                      surname    = '" . $surname . "',
-                     photo    = '" . mysqli_real_escape_string($conn,$photo_path) . "',
-                     updated_at    = '" . date("Y-m-d") . "',
+                     photo    = '" . mysqli_real_escape_string($conn, $new_path) . "',
+                     updated_at    = '" . date("Y-m-d H:i:s") . "',
                      email    = '" . $email . "'
-                     WHERE id = '".$_SESSION['id']."'
+                     WHERE id = '" . $_SESSION['id'] . "'
                      ";
-//    print_r($query_update);
-//    exit;
-    $result_insert = mysqli_query($conn, $query_update);
+//
+    $result_update = mysqli_query($conn, $query_update);
 
-    if (!$result_insert) {
+    if (!$result_update) {
         http_response_code(203);
         echo json_encode(
             array(

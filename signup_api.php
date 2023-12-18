@@ -119,7 +119,7 @@ if (isset($_POST['action']) && $_POST['action'] == "signup") {
                      set name    = '" . $name . "',
                      surname    = '" . $surname . "',
                      password    = '" . $password_hashed . "',
-                     created_at    = '" . date("Y-m-d") . "',
+                     created_at    = '" . date("Y-m-d H:i:s") . "',
                      email    = '" . $email . "'";
 
     $result_insert = mysqli_query($conn, $query_insert);
